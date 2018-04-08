@@ -19,14 +19,32 @@ router.route('/teams').get(function (req, res) {
 		res.send(team);
 	});
 }).post(function (req, res) {
-	var name = req.body.name;
-	var formation = req.body.formation;
-	var data = { name: req.body.name, formation: req.body.formation };
+	_models.Team.findOne({
+		where: {
+			userId: req.body.userId
+		}
+	}).then(function (team) {
+		//Não permite usuário criar mais de um time
+		if (!team) {
+			var name = req.body.name;
+			var formation = req.body.formation;
+			var score = req.body.score;
+			var userId = req.body.userId;
+			var data = {
+				name: req.body.name,
+				formation: req.body.formation,
+				score: req.body.score,
+				userId: req.body.userId
+			};
 
-	_models.Team.create(data).then(function (team) {
-		res.json({
-			message: 'Time cadastrado com sucesso!!'
-		});
+			_models.Team.create(data).then(function (team) {
+				res.json({
+					message: 'Time cadastrado com sucesso!!'
+				});
+			});
+		} else {
+			res.json({ error: 'Usuário já possui um time' });
+		}
 	});
 });
 
@@ -42,7 +60,7 @@ router.route('/teams/:team_id').get(function (req, res) {
 	_models.Team.findById(req.params.team_id).then(function (team) {
 		if (team) {
 			team.destroy().then(function (team) {
-				res.json({ message: 'Jogador Deletado' });
+				res.json({ message: 'Time Deletado' });
 			});
 		} else {
 			res.json({ error: 'Time não cadastrado' });
@@ -53,7 +71,9 @@ router.route('/teams/:team_id').get(function (req, res) {
 		if (team) {
 			team.update({
 				name: req.body.name,
-				formation: req.body.formation
+				formation: req.body.formation,
+				score: req.body.score,
+				userId: req.body.userId
 			}).then(function (team) {
 				res.json(team);
 			});
