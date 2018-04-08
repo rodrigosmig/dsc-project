@@ -1,8 +1,10 @@
 import express from 'express';
 import {Player} from '../modelos/models';
 import jwt from 'jsonwebtoken';
+import Sequelize from 'sequelize';
 
 let router = express.Router();
+const Op = Sequelize.Op;
 
 router.route('/players')
 
@@ -26,6 +28,25 @@ router.route('/players')
 				res.json({message:'cadastro com sucesso!!'});
 		})
 		
+	})
+
+router.route('/players/nome/:player_name')
+
+	.get((req, res)=>{
+		const player_name = "%" + req.params.player_name + "%";
+		Player.findAll({
+			where: {
+				name: {
+					[Op.like]: player_name,
+				} 
+			}
+		}).then(player =>{
+			if(player.length !== 0) {
+				res.json(player);
+			}else{
+				res.json({message: 'Nenhum jogador cadastrado'});
+			}
+		})
 	})
 
 router.route('/players/:player_id')
