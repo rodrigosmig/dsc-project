@@ -45,16 +45,17 @@ var Tipo = exports.Tipo = sequelize.define('tipo', {
 
 var Team = exports.Team = sequelize.define('team', {
 	name: _sequelize2.default.STRING,
-	formation: _sequelize2.default.STRING
+	formation: _sequelize2.default.STRING,
+	score: _sequelize2.default.INTEGER
 });
 
+//chave entrangeira de Event
 Tipo.hasOne(Event);
 Player.hasOne(Event);
-/* Event.belongsTo(Tipo)
-Tipo.hasMany(Event)
 
-Player.belongsTo(Event)
-Event.hasMany(Player) */
+//chave estrangeira de Team
+User.hasOne(Team);
+/* Player.hasOne(Team) */
 
 /* User.belongsTo(Team)
 Team.belongsTo(User) */
